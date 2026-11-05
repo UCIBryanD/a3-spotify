@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
+import { NONE_TYPE } from '@angular/compiler';
 
 @Component({
     selector: 'app-about',
@@ -8,18 +9,24 @@ import { SpotifyService } from '../../services/spotify.service';
     standalone: false
 })
 export class AboutComponent implements OnInit {
-  name:string = null;
+  name:string = "null";
   profile_pic:string = "assets/unknown.jpg";
-  profile_link:string = null;
+  profile_link:string = "null";
 
 
   //TODO: inject the Spotify service
-  constructor() { }
+  constructor(private spotify_service:SpotifyService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
    /*TODO: create a function which gets the "about me" information from Spotify when the button in the view is clicked.
   In that function, update the name, profile_pic, and profile_link fields */
+  getUserInfo() {
+    this.spotify_service.aboutMe().then((data) => {
+      this.name = data.name;
+      this.profile_pic = data.imageURL;
+      this.profile_link = data.spotifyProfile;
+    });
+  }
 
 }
