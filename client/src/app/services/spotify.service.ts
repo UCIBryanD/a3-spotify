@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ConstructorProvider, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ArtistData } from '../data/artist-data';
@@ -41,17 +41,42 @@ export class SpotifyService {
     //Make sure you're encoding the resource with encodeURIComponent().
     //Depending on the category (artist, track, album), return an array of that type of data.
     //JavaScript's "map" function might be useful for this, but there are other ways of building the array.
+
+    const encode_res = encodeURIComponent(resource)
+    var data_constructor: typeof ArtistData | typeof AlbumData | typeof TrackData;
+    if (category === "artist") {data_constructor = ArtistData;}
+    else if (category === "album") {data_constructor = AlbumData;}
+    else if (category === "track") {data_constructor = TrackData;}
+    //console.log(`/search/${category}/${encode_res}`);
+    return this.sendRequestToExpress(`/search/${category}/${encode_res}`).then((data) => {
+      //console.log(typeof data);
+      console.log(data);
+      const data_array = data[category + "s"].items;
+        //console.log(data[category + "s"].items);
+      const construct_array = data_array.map(obj_data => new data_constructor(obj_data));
+      console.log(construct_array);
+      
+      return construct_array;
+    });
+
     return null as any;
   }
 
   getArtist(artistId:string):Promise<ArtistData> {
     //TODO: use the artist endpoint to make a request to express.
     //Again, you may need to encode the artistId.
+    const encode_id = encodeURIComponent(artistId);
+    return this.sendRequestToExpress(encode_id).then((data) => {
+      return new data;
+    });
     return null as any;
   }
 
   getTopTracksForArtist(artistId:string):Promise<TrackData[]> {
     //TODO: use the top tracks endpoint to make a request to express.
+    return this.sendRequestToExpress(artistId).then((data) => {
+      return new data;
+    });
     return null as any;
   }
 
