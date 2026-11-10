@@ -9,10 +9,15 @@ import { Popularity } from 'src/app/data/popularity';
 })
 export class ThermometerComponent implements OnInit {
   //TODO: define Input fields and bind them to the template.
-
+  @Input() popularity = null;
+  width_pct:string = "";
+  bg_color = null;
   constructor() { }
 
   ngOnInit() {
+    this.width_pct = this.popularity.percentageString;
+    this.bg_color = this.popularity.color;
+    console.log(this.width_pct);
   }
 
 }
